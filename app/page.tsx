@@ -7,23 +7,20 @@ import { OverviewView } from "@/components/OverviewView";
 import { IssuesView } from "@/components/IssuesView";
 import { WhimsicalShowcase } from "@/components/WhimsicalShowcase";
 import { AgentsView } from "@/components/AgentsView";
-import { X, Sparkles, Plus } from "lucide-react";
+import { X, Plus } from "lucide-react";
 
 export default function Home() {
   const [currentTab, setCurrentTab] = useState<"overview" | "issues" | "whimsical" | "agents">("overview");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [whimsicalMode, setWhimsicalMode] = useState(true);
   const [points, setPoints] = useState(420);
   const [isNewIssueModalOpen, setIsNewIssueModalOpen] = useState(false);
 
   // New issue form state
   const [newTitle, setNewTitle] = useState("");
   const [newSeverity, setNewSeverity] = useState<"low" | "medium" | "high">("medium");
-  const [newWhimsicalTag, setNewWhimsicalTag] = useState("✨ Sparkle Master");
 
   useEffect(() => {
-    // Check system preference
     if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setDarkMode(true);
       document.documentElement.classList.add("dark");
@@ -73,8 +70,6 @@ export default function Home() {
         <AppHeader
           darkMode={darkMode}
           onToggleTheme={handleToggleTheme}
-          whimsicalMode={whimsicalMode}
-          onToggleWhimsicalMode={() => setWhimsicalMode(!whimsicalMode)}
           onNewIssueClick={() => setIsNewIssueModalOpen(true)}
           points={points}
         />
@@ -83,7 +78,6 @@ export default function Home() {
         <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full">
           {currentTab === "overview" && (
             <OverviewView
-              whimsicalMode={whimsicalMode}
               onNavigateToIssues={() => setCurrentTab("issues")}
               onNavigateToWhimsical={() => setCurrentTab("whimsical")}
             />
@@ -91,7 +85,6 @@ export default function Home() {
 
           {currentTab === "issues" && (
             <IssuesView
-              whimsicalMode={whimsicalMode}
               onOpenNewIssueModal={() => setIsNewIssueModalOpen(true)}
             />
           )}
@@ -118,7 +111,7 @@ export default function Home() {
                   <Plus size={16} />
                 </div>
                 <h2 className="text-base font-bold" style={{ color: "var(--text)" }}>
-                  Create New Mock Issue
+                  Create New Issue
                 </h2>
               </div>
 
@@ -140,7 +133,7 @@ export default function Home() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Design playful mascot illustration for empty state..."
+                  placeholder="e.g. Issue description..."
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border text-xs bg-slate-100 dark:bg-slate-800 focus:outline-none focus:border-blue-500"
@@ -164,32 +157,11 @@ export default function Home() {
                           : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300"
                       }`}
                     >
-                      {sev === "low" ? "🌱 Low" : sev === "medium" ? "🐝 Medium" : "🔥 High"}
+                      {sev}
                     </button>
                   ))}
                 </div>
               </div>
-
-              {whimsicalMode && (
-                <div>
-                  <label className="text-xs font-bold text-pink-500 uppercase tracking-wider block mb-1.5 flex items-center gap-1">
-                    <Sparkles size={12} />
-                    <span>Whimsical Graphic Sticker</span>
-                  </label>
-                  <select
-                    value={newWhimsicalTag}
-                    onChange={(e) => setNewWhimsicalTag(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border text-xs bg-slate-100 dark:bg-slate-800"
-                    style={{ borderColor: "var(--border)", color: "var(--text)" }}
-                  >
-                    <option value="✨ Sparkle Master">✨ Sparkle Master</option>
-                    <option value="👾 Glitch Goblin">👾 Glitch Goblin</option>
-                    <option value="🐝 Spicy Bug">🐝 Spicy Bug</option>
-                    <option value="🔥 Dragon Alert">🔥 Dragon Alert</option>
-                    <option value="🎉 Party Blob">🎉 Party Blob</option>
-                  </select>
-                </div>
-              )}
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t mt-2" style={{ borderColor: "var(--divider)" }}>
                 <button
@@ -203,7 +175,7 @@ export default function Home() {
                   type="submit"
                   className="px-5 py-2 rounded-full text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md transition"
                 >
-                  Create & Award +30 pts
+                  Create Issue
                 </button>
               </div>
             </form>

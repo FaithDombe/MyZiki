@@ -3,15 +3,7 @@
 import React, { useState } from "react";
 import { 
   Search, 
-  Filter, 
   Plus, 
-  CheckCircle2, 
-  Clock, 
-  AlertTriangle, 
-  Sparkles,
-  Smile,
-  Layers,
-  ChevronDown,
   MessageSquare
 } from "lucide-react";
 
@@ -26,23 +18,20 @@ interface IssueItem {
   stage: "Reported" | "Confirmed" | "Resolved";
   author: string;
   commentsCount: number;
-  whimsicalSticker?: string;
 }
 
 interface IssuesViewProps {
-  whimsicalMode: boolean;
   onOpenNewIssueModal: () => void;
 }
 
 export const IssuesView: React.FC<IssuesViewProps> = ({
-  whimsicalMode,
   onOpenNewIssueModal,
 }) => {
   const [activePlatform, setActivePlatform] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState<string>("all");
 
-  const [issues, setIssues] = useState<IssueItem[]>([
+  const [issues] = useState<IssueItem[]>([
     {
       id: "1",
       key: "ZK-646",
@@ -54,7 +43,6 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
       stage: "Confirmed",
       author: "Faith Dombe",
       commentsCount: 4,
-      whimsicalSticker: "⚡ Glitch Goblin",
     },
     {
       id: "2",
@@ -67,20 +55,18 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
       stage: "Reported",
       author: "Ziki Dispatcher",
       commentsCount: 9,
-      whimsicalSticker: "🔥 Fire Dragon",
     },
     {
       id: "3",
       key: "ZK-711",
-      title: "Add whimsical celebratory animations to solved ticket milestones",
-      description: "Introduce playful confetti bursts, animated mascot reactions, and joyful audio chimes upon ticket resolution.",
+      title: "Milestone completion event listener drops payload on re-render",
+      description: "Introduce reliable event handling upon ticket milestone resolution.",
       platform: "web",
       severity: "low",
       status: "in_progress",
       stage: "Confirmed",
       author: "Faith Dombe",
       commentsCount: 7,
-      whimsicalSticker: "🎉 Party Blob",
     },
     {
       id: "4",
@@ -93,7 +79,6 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
       stage: "Reported",
       author: "Alex Morgan",
       commentsCount: 2,
-      whimsicalSticker: "👻 Ghost Pixels",
     },
     {
       id: "5",
@@ -106,7 +91,6 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
       stage: "Reported",
       author: "Sarah Chen",
       commentsCount: 3,
-      whimsicalSticker: "🔋 Sleepy Battery",
     },
     {
       id: "6",
@@ -119,17 +103,8 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
       stage: "Resolved",
       author: "Devon Reed",
       commentsCount: 5,
-      whimsicalSticker: "🤖 Happy Droid",
     },
   ]);
-
-  const addSticker = (issueId: string, sticker: string) => {
-    setIssues((prev) =>
-      prev.map((iss) =>
-        iss.id === issueId ? { ...iss, whimsicalSticker: sticker } : iss
-      )
-    );
-  };
 
   const filteredIssues = issues.filter((item) => {
     const matchesPlatform = activePlatform === "all" || item.platform === activePlatform;
@@ -142,14 +117,13 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
 
   return (
     <div className="flex flex-col gap-6 pb-16">
-      {/* Top Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black tracking-tight" style={{ color: "var(--text)" }}>
             Issues Tracker
           </h1>
           <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-            Browse, filter, and assign bugs with interactive whimsical status reactions.
+            Browse, filter, and assign bugs across all platforms.
           </p>
         </div>
 
@@ -164,7 +138,6 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
         </button>
       </div>
 
-      {/* Platform Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b" style={{ borderColor: "var(--divider)" }}>
         {[
           { id: "all", label: "All Platforms", count: issues.length },
@@ -195,7 +168,6 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
         ))}
       </div>
 
-      {/* Search & Filter Bar */}
       <div 
         className="p-3 rounded-2xl border flex flex-col sm:flex-row items-center gap-3 transition-all"
         style={{
@@ -207,7 +179,7 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Search issues by title or key (e.g. ZK-646)..."
+            placeholder="Search issues by title or key..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-transparent focus:border-blue-500 focus:outline-none transition-colors"
@@ -215,7 +187,6 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
           />
         </div>
 
-        {/* Severity Filter */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <span className="text-xs font-semibold text-slate-400 shrink-0">Severity:</span>
           <select
@@ -232,7 +203,6 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
         </div>
       </div>
 
-      {/* Issues List */}
       <div className="flex flex-col gap-3">
         {filteredIssues.map((issue) => (
           <div
@@ -254,7 +224,6 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
                 </h3>
               </div>
 
-              {/* Status Badges */}
               <div className="flex items-center gap-2">
                 <span
                   className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider"
@@ -295,46 +264,13 @@ export const IssuesView: React.FC<IssuesViewProps> = ({
               {issue.description}
             </p>
 
-            {/* Footer with Whimsical Sticker & Author */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t text-xs" style={{ borderColor: "var(--divider)" }}>
-              <div className="flex items-center gap-3" style={{ color: "var(--muted)" }}>
-                <span>Reported by <strong className="text-slate-800 dark:text-slate-200">{issue.author}</strong></span>
-                <span>•</span>
-                <span className="flex items-center gap-1">
-                  <MessageSquare size={13} />
-                  {issue.commentsCount} comments
-                </span>
-              </div>
-
-              {/* Whimsical Sticker Badge & Quick Add */}
-              <div className="flex items-center gap-2">
-                {issue.whimsicalSticker && (
-                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-pink-500/10 text-pink-600 dark:text-pink-300 border border-pink-400/30 flex items-center gap-1.5 shadow-sm">
-                    <Sparkles size={12} className="text-pink-500 animate-spin" />
-                    {issue.whimsicalSticker}
-                  </span>
-                )}
-
-                {whimsicalMode && (
-                  <div className="flex items-center gap-1">
-                    {[
-                      { emoji: "👾", name: "Glitch" },
-                      { emoji: "🐝", name: "Spicy" },
-                      { emoji: "✨", name: "Sparkle" },
-                    ].map((st) => (
-                      <button
-                        key={st.name}
-                        type="button"
-                        onClick={() => addSticker(issue.id, `${st.emoji} ${st.name}`)}
-                        className="px-2 py-0.5 rounded-full text-[11px] bg-slate-100 dark:bg-slate-800 hover:bg-pink-100 hover:text-pink-600 transition"
-                        title={`Tag with whimsical reaction ${st.name}`}
-                      >
-                        {st.emoji}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+            <div className="flex items-center gap-3 pt-3 border-t text-xs" style={{ borderColor: "var(--divider)", color: "var(--muted)" }}>
+              <span>Reported by <strong className="text-slate-800 dark:text-slate-200">{issue.author}</strong></span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <MessageSquare size={13} />
+                {issue.commentsCount} comments
+              </span>
             </div>
           </div>
         ))}

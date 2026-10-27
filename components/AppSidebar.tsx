@@ -5,13 +5,11 @@ import Image from "next/image";
 import { 
   LayoutDashboard, 
   CheckSquare, 
-  Sparkles, 
-  Users, 
-  ChevronDown, 
+  Palette, 
+  Bot,
   ChevronLeft, 
   ChevronRight,
-  ExternalLink,
-  Bot
+  ExternalLink
 } from "lucide-react";
 
 interface AppSidebarProps {
@@ -80,7 +78,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             </div>
             <div className="flex flex-col min-w-0 flex-1">
               <span className="text-[11px] text-[#A9BCDF] uppercase tracking-wide font-medium">Project</span>
-              <span className="text-sm font-bold truncate">MyZiki Lab</span>
+              <span className="text-sm font-bold truncate">MyZiki</span>
             </div>
             <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">
               Dev
@@ -88,7 +86,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           </div>
         ) : (
           <div className="flex justify-center">
-            <div className="w-9 h-9 rounded-lg bg-[#263B63] text-white flex items-center justify-center font-bold text-xs" title="Project: MyZiki Lab">
+            <div className="w-9 h-9 rounded-lg bg-[#263B63] text-white flex items-center justify-center font-bold text-xs" title="Project: MyZiki">
               Zi
             </div>
           </div>
@@ -133,26 +131,19 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             )}
           </button>
 
-          {/* Whimsical Graphics Lab (User's Feature!) */}
+          {/* Whimsical Graphics Canvas */}
           <button
             type="button"
             onClick={() => onSelectTab("whimsical")}
-            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all relative group ${
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
               currentTab === "whimsical"
-                ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/25 font-bold"
+                ? "bg-[#2E6FEF] text-white shadow-lg shadow-blue-600/30 font-bold"
                 : "text-[#B7C3DA] hover:text-white hover:bg-white/5"
             }`}
-            title="Whimsical Graphics Lab"
+            title="Whimsical Graphics"
           >
-            <Sparkles size={18} className="shrink-0 text-amber-300 group-hover:rotate-12 transition-transform" />
-            {!collapsed && (
-              <>
-                <span className="flex-1 text-left">Whimsical Lab</span>
-                <span className="px-1.5 py-0.5 text-[10px] uppercase tracking-wider rounded-md bg-amber-400 text-amber-950 font-black animate-pulse">
-                  Idea ✨
-                </span>
-              </>
-            )}
+            <Palette size={18} className="shrink-0" />
+            {!collapsed && <span className="flex-1 text-left">Whimsical Graphics</span>}
           </button>
 
           {/* Agents */}
@@ -181,22 +172,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
       {/* Sidebar Footer */}
       <div className="pt-4 border-t border-[#1F335E]/60 flex flex-col gap-2">
-        {!collapsed ? (
-          <div className="p-3 rounded-xl bg-[#16274B]/70 border border-[#2B457A]/40 text-xs">
-            <p className="font-semibold text-white flex items-center justify-between">
-              <span>Ready for Vercel</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            </p>
-            <p className="text-[11px] text-[#9CB3DC] mt-1 leading-relaxed">
-              Standalone Next.js preview app designed for easy deployment and tutor reviews.
-            </p>
-          </div>
-        ) : (
-          <div className="flex justify-center" title="Ready for Vercel">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-          </div>
-        )}
-
         <a
           href="https://ziki.dev"
           target="_blank"

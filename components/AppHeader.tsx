@@ -13,6 +13,7 @@ interface AppHeaderProps {
   darkMode: boolean;
   onToggleTheme: () => void;
   onNewIssueClick: () => void;
+  onProfileClick: () => void;
   points: number;
 }
 
@@ -20,6 +21,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   darkMode,
   onToggleTheme,
   onNewIssueClick,
+  onProfileClick,
   points,
 }) => {
   return (
@@ -40,9 +42,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           }}
         >
           <Award size={14} className="text-amber-500 shrink-0" />
-          <span className="font-bold">{points}</span>
-          <span className="opacity-75">/ 500 Weekly Target</span>
-          {points >= 500 && <CheckCircle2 size={13} className="text-emerald-500" />}
+          <span className="font-bold">1,702.87 pts</span>
+          <span className="opacity-75">/ Top Contributor</span>
         </div>
       </div>
 
@@ -77,19 +78,29 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           {darkMode ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} className="text-slate-600" />}
         </button>
 
-        {/* Profile Avatar */}
-        <div className="flex items-center gap-2 pl-2 border-l" style={{ borderColor: "var(--border)" }}>
+        {/* Profile Avatar (Clickable to open profile settings) */}
+        <button
+          type="button"
+          onClick={onProfileClick}
+          className="flex items-center gap-2 pl-2 border-l text-left group transition-all" 
+          style={{ borderColor: "var(--border)" }}
+          title="Click to view and edit Profile"
+        >
           <div className="relative">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-black text-xs shadow-sm">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-black text-xs shadow-sm group-hover:ring-2 group-hover:ring-blue-500 transition-all">
               FD
             </div>
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
           </div>
           <div className="hidden lg:flex flex-col text-left">
-            <span className="text-xs font-bold leading-tight" style={{ color: "var(--text)" }}>Faith Dombe</span>
-            <span className="text-[10px] leading-tight font-medium" style={{ color: "var(--muted)" }}>Contributor</span>
+            <span className="text-xs font-bold leading-tight group-hover:text-blue-500 transition-colors" style={{ color: "var(--text)" }}>
+              faith dombe
+            </span>
+            <span className="text-[10px] leading-tight font-medium" style={{ color: "var(--muted)" }}>
+              Settings & Whimsy
+            </span>
           </div>
-        </div>
+        </button>
       </div>
     </header>
   );

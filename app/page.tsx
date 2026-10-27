@@ -7,13 +7,14 @@ import { OverviewView } from "@/components/OverviewView";
 import { IssuesView } from "@/components/IssuesView";
 import { WhimsicalShowcase } from "@/components/WhimsicalShowcase";
 import { AgentsView } from "@/components/AgentsView";
+import { ProfileView } from "@/components/ProfileView";
 import { X, Plus } from "lucide-react";
 
 export default function Home() {
-  const [currentTab, setCurrentTab] = useState<"overview" | "issues" | "whimsical" | "agents">("overview");
+  const [currentTab, setCurrentTab] = useState<"overview" | "issues" | "whimsical" | "agents" | "profile">("profile");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [points, setPoints] = useState(420);
+  const [points, setPoints] = useState(1702);
   const [isNewIssueModalOpen, setIsNewIssueModalOpen] = useState(false);
 
   // New issue form state
@@ -71,6 +72,7 @@ export default function Home() {
           darkMode={darkMode}
           onToggleTheme={handleToggleTheme}
           onNewIssueClick={() => setIsNewIssueModalOpen(true)}
+          onProfileClick={() => setCurrentTab("profile")}
           points={points}
         />
 
@@ -87,6 +89,10 @@ export default function Home() {
             <IssuesView
               onOpenNewIssueModal={() => setIsNewIssueModalOpen(true)}
             />
+          )}
+
+          {currentTab === "profile" && (
+            <ProfileView onBack={() => setCurrentTab("overview")} />
           )}
 
           {currentTab === "whimsical" && <WhimsicalShowcase />}

@@ -7,14 +7,15 @@ import {
   CheckSquare, 
   Palette, 
   Bot,
+  User,
   ChevronLeft, 
   ChevronRight,
   ExternalLink
 } from "lucide-react";
 
 interface AppSidebarProps {
-  currentTab: "overview" | "issues" | "whimsical" | "agents";
-  onSelectTab: (tab: "overview" | "issues" | "whimsical" | "agents") => void;
+  currentTab: "overview" | "issues" | "whimsical" | "agents" | "profile";
+  onSelectTab: (tab: "overview" | "issues" | "whimsical" | "agents" | "profile") => void;
   collapsed: boolean;
   onToggleCollapse: () => void;
 }
@@ -131,7 +132,29 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             )}
           </button>
 
-          {/* Whimsical Graphics Canvas */}
+          {/* Whimsical Profile (User's feature) */}
+          <button
+            type="button"
+            onClick={() => onSelectTab("profile")}
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              currentTab === "profile"
+                ? "bg-[#2E6FEF] text-white shadow-lg shadow-blue-600/30 font-bold"
+                : "text-[#B7C3DA] hover:text-white hover:bg-white/5"
+            }`}
+            title="Profile"
+          >
+            <User size={18} className="shrink-0" />
+            {!collapsed && (
+              <>
+                <span className="flex-1 text-left">Profile & Whimsy</span>
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-pink-500 text-white font-bold animate-pulse">
+                  Idea ✨
+                </span>
+              </>
+            )}
+          </button>
+
+          {/* Whimsical Canvas */}
           <button
             type="button"
             onClick={() => onSelectTab("whimsical")}
@@ -140,10 +163,10 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                 ? "bg-[#2E6FEF] text-white shadow-lg shadow-blue-600/30 font-bold"
                 : "text-[#B7C3DA] hover:text-white hover:bg-white/5"
             }`}
-            title="Whimsical Graphics"
+            title="Whimsical Canvas"
           >
             <Palette size={18} className="shrink-0" />
-            {!collapsed && <span className="flex-1 text-left">Whimsical Graphics</span>}
+            {!collapsed && <span className="flex-1 text-left">Whimsical Canvas</span>}
           </button>
 
           {/* Agents */}

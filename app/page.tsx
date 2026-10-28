@@ -8,10 +8,11 @@ import { IssuesView } from "@/components/IssuesView";
 import { WhimsicalShowcase } from "@/components/WhimsicalShowcase";
 import { AgentsView } from "@/components/AgentsView";
 import { ProfileView } from "@/components/ProfileView";
+import { CompanionDock } from "@/components/whimsical/CompanionDock";
 import { X, Plus } from "lucide-react";
 
 export default function Home() {
-  const [currentTab, setCurrentTab] = useState<"overview" | "issues" | "whimsical" | "agents" | "profile">("profile");
+  const [currentTab, setCurrentTab] = useState<"overview" | "issues" | "whimsical" | "agents" | "profile">("whimsical");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [points, setPoints] = useState(1702);
@@ -100,6 +101,9 @@ export default function Home() {
           {currentTab === "agents" && <AgentsView />}
         </main>
       </div>
+
+      {/* Floating Non-Intrusive Agent Companion & Lucky Dice Dock */}
+      <CompanionDock />
 
       {/* New Issue Modal */}
       {isNewIssueModalOpen && (

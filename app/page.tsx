@@ -9,6 +9,7 @@ import { WhimsicalShowcase } from "@/components/WhimsicalShowcase";
 import { AgentsView } from "@/components/AgentsView";
 import { ProfileView } from "@/components/ProfileView";
 import { CompanionDock } from "@/components/whimsical/CompanionDock";
+import { WHIMSICAL_BOTS, getBotById, WhimsicalBot } from "@/components/whimsical/botData";
 import { X, Plus } from "lucide-react";
 
 export default function Home() {
@@ -18,6 +19,10 @@ export default function Home() {
   const [points, setPoints] = useState(1702);
   const [isNewIssueModalOpen, setIsNewIssueModalOpen] = useState(false);
 
+  // Selected whimsical bot state (defaulting to Triaging Agent: Bug ZK-646)
+  const [selectedBotId, setSelectedBotId] = useState<string>("triaging");
+  const selectedBot = getBotById(selectedBotId);
+
   // New issue form state
   const [newTitle, setNewTitle] = useState("");
   const [newSeverity, setNewSeverity] = useState<"low" | "medium" | "high">("medium");
@@ -26,6 +31,15 @@ export default function Home() {
     if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setDarkMode(true);
       document.documentElement.classList.add("dark");
+    }
+
+    try {
+      const savedBot = localStorage.getItem("ziki_selected_bot");
+      if (savedBot && WHIMSICAL_BOTS.some((b) => b.id === savedBot)) {
+        setSelectedBotId(savedBot);
+      }
+    } catch {
+      // LocalStorage unavailable
     }
   }, []);
 
@@ -39,6 +53,15 @@ export default function Home() {
       }
       return next;
     });
+  };
+
+  const handleSelectBot = (bot: WhimsicalBot) => {
+    setSelectedBotId(bot.id);
+    try {
+      localStorage.setItem("ziki_selected_bot", bot.id);
+    } catch {
+      // LocalStorage write failed
+    }
   };
 
   const handleCreateMockIssue = (e: React.FormEvent) => {
@@ -75,6 +98,7 @@ export default function Home() {
           onNewIssueClick={() => setIsNewIssueModalOpen(true)}
           onProfileClick={() => setCurrentTab("profile")}
           points={points}
+          selectedBot={selectedBot}
         />
 
         {/* Dynamic Main Body Content */}
@@ -96,14 +120,19 @@ export default function Home() {
             <ProfileView onBack={() => setCurrentTab("overview")} />
           )}
 
-          {currentTab === "whimsical" && <WhimsicalShowcase />}
+          {currentTab === "whimsical" && (
+            <WhimsicalShowcase 
+              selectedBot={selectedBot}
+              onSelectBot={handleSelectBot}
+            />
+          )}
 
           {currentTab === "agents" && <AgentsView />}
         </main>
       </div>
 
       {/* Floating Non-Intrusive Agent Companion & Lucky Dice Dock */}
-      <CompanionDock />
+      <CompanionDock selectedBot={selectedBot} />
 
       {/* New Issue Modal */}
       {isNewIssueModalOpen && (

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Sparkles, Heart, Bot, Zap, Coffee, Award, Volume2, VolumeX } from "lucide-react";
+import { WhimsicalBot, WHIMSICAL_BOTS } from "./botData";
 
 export type AgentState = "hunting" | "coding" | "resting" | "celebrating";
 
@@ -10,36 +11,15 @@ interface InteractiveCompanionProps {
   state?: AgentState;
   onStateChange?: (newState: AgentState) => void;
   showBubble?: boolean;
+  bot?: WhimsicalBot;
 }
-
-const AGENT_MESSAGES: Record<AgentState, { title: string; subtitle: string; action: string }> = {
-  hunting: {
-    title: "Triaging Bug ZK-646",
-    subtitle: "Analyzing stack trace on theme switcher...",
-    action: "Active Hunt",
-  },
-  coding: {
-    title: "Writing PR #1290",
-    subtitle: "Drafting fix for cron scheduler route...",
-    action: "Synthesizing Fix",
-  },
-  resting: {
-    title: "Agent Standby",
-    subtitle: "Waiting for new bounty notifications...",
-    action: "Cooldown Mode",
-  },
-  celebrating: {
-    title: "Bounty Won (+120 pts)!",
-    subtitle: "PR merged into upstream main branch!",
-    action: "Delivered",
-  },
-};
 
 export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
   size = "md",
   state = "hunting",
   onStateChange,
   showBubble = true,
+  bot = WHIMSICAL_BOTS[1], // default to Triaging Bug ZK-646
 }) => {
   const [internalState, setInternalState] = useState<AgentState>(state);
   const activeState = onStateChange ? state : internalState;
@@ -54,8 +34,8 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
   const rightEyeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Play pleasant web audio chime
-  const playSound = (freq = 440, type: OscillatorType = "sine") => {
+  // Play pleasant web audio chime customized by bot's sound frequency
+  const playSound = (freq = bot.soundFrequency || 523.25, type: OscillatorType = "sine") => {
     if (!soundEnabled || typeof window === "undefined") return;
     try {
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -116,8 +96,8 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
   // Trigger Good Vibes action
   const handleTriggerVibes = () => {
     setIsWinking(true);
-    playSound(587.33, "triangle"); // D5
-    setTimeout(() => playSound(880, "sine"), 120); // A5
+    playSound(bot.soundFrequency, "triangle");
+    setTimeout(() => playSound(bot.soundFrequency * 1.5, "sine"), 120);
 
     // Spawn floating hearts/sparkles
     const newId = Date.now();
@@ -134,6 +114,103 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
   };
 
   const scale = size === "sm" ? 0.75 : size === "lg" ? 1.25 : 1;
+
+  // Custom Antennas based on bot's role and antenna style
+  const renderBotAntennas = () => {
+    switch (bot.antennaStyle) {
+      case "triaging":
+        // Bug antennae with green curved feelers
+        return (
+          <g>
+            <path
+              d="M 42 30 Q 30 14 22 8"
+              stroke={bot.primaryColor}
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+            <circle cx="21" cy="7" r="4.5" fill={bot.glowColor} className="animate-pulse" />
+            <path
+              d="M 68 30 Q 80 14 88 8"
+              stroke={bot.primaryColor}
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+            <circle cx="89" cy="7" r="4.5" fill={bot.glowColor} className="animate-pulse" />
+          </g>
+        );
+      case "comment":
+        // Speech bubble antenna
+        return (
+          <g>
+            <line x1="55" y1="28" x2="55" y2="18" stroke={bot.primaryColor} strokeWidth="3" strokeLinecap="round" />
+            <rect x="43" y="6" width="24" height="14" rx="5" fill={bot.primaryColor} />
+            <polygon points="51,20 56,20 53,24" fill={bot.primaryColor} />
+            <circle cx="48" cy="13" r="1.5" fill="white" />
+            <circle cx="55" cy="13" r="1.5" fill="white" />
+            <circle cx="62" cy="13" r="1.5" fill="white" />
+          </g>
+        );
+      case "review":
+        // Monocle / Inspector magnifying lens antenna
+        return (
+          <g>
+            <line x1="66" y1="28" x2="76" y2="15" stroke={bot.primaryColor} strokeWidth="3" strokeLinecap="round" />
+            <circle cx="81" cy="10" r="7" stroke={bot.primaryColor} strokeWidth="2.5" fill="none" />
+            <circle cx="81" cy="10" r="4" fill={bot.glowColor} fillOpacity="0.4" />
+            <line x1="44" y1="28" x2="36" y2="17" stroke={bot.primaryColor} strokeWidth="3" strokeLinecap="round" />
+            <circle cx="34" cy="15" r="4" fill={bot.primaryColor} />
+          </g>
+        );
+      case "merger":
+        // Git branch fork antenna
+        return (
+          <g>
+            <line x1="55" y1="28" x2="55" y2="18" stroke={bot.primaryColor} strokeWidth="3" strokeLinecap="round" />
+            <line x1="55" y1="18" x2="42" y2="9" stroke={bot.primaryColor} strokeWidth="3" strokeLinecap="round" />
+            <line x1="55" y1="18" x2="68" y2="9" stroke={bot.primaryColor} strokeWidth="3" strokeLinecap="round" />
+            <circle cx="42" cy="9" r="4" fill={bot.glowColor} />
+            <circle cx="68" cy="9" r="4" fill={bot.glowColor} />
+            <circle cx="55" cy="18" r="3" fill="white" />
+          </g>
+        );
+      case "dispatcher":
+        // Satellite radar dish with signal arcs
+        return (
+          <g>
+            <line x1="55" y1="28" x2="55" y2="18" stroke={bot.primaryColor} strokeWidth="3" strokeLinecap="round" />
+            <path d="M 43 14 A 12 12 0 0 1 67 14" stroke={bot.primaryColor} strokeWidth="3" fill="none" strokeLinecap="round" />
+            <circle cx="55" cy="9" r="3.5" fill="#FBBF24" />
+            <path d="M 39 10 A 17 17 0 0 1 71 10" stroke={bot.glowColor} strokeWidth="1.5" fill="none" strokeDasharray="3,3" />
+          </g>
+        );
+      case "contributor":
+        // Golden Star Crown Antenna
+        return (
+          <g>
+            <line x1="55" y1="28" x2="55" y2="17" stroke={bot.primaryColor} strokeWidth="3" strokeLinecap="round" />
+            <polygon
+              points="55,3 58,11 66,11 60,16 62,24 55,19 48,24 50,16 44,11 52,11"
+              fill="#F59E0B"
+              stroke="#D97706"
+              strokeWidth="1"
+            />
+          </g>
+        );
+      case "ziki":
+      default:
+        // Classic dual antennas with playful yellow & colored spheres
+        return (
+          <g>
+            <line x1="42" y1="30" x2="32" y2="15" stroke={bot.primaryColor} strokeWidth="4" strokeLinecap="round" />
+            <circle cx="30" cy="13" r="5" fill="#FFD166" />
+            <line x1="68" y1="30" x2="78" y2="15" stroke={bot.primaryColor} strokeWidth="4" strokeLinecap="round" />
+            <circle cx="80" cy="13" r="5" fill={activeState === "hunting" ? bot.glowColor : "#FF6584"} />
+          </g>
+        );
+    }
+  };
 
   return (
     <div ref={containerRef} className="flex flex-col items-center select-none relative group">
@@ -152,19 +229,31 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
         </span>
       ))}
 
-      {/* Real-time State Speech Bubble (Communicates Utility as Mark requested) */}
+      {/* Real-time State Speech Bubble */}
       {showBubble && (
         <div 
-          className="mb-2.5 px-3 py-2 rounded-2xl border text-left shadow-lg backdrop-blur-md transition-all duration-300 max-w-[260px] animate-in fade-in"
+          className="mb-2.5 px-3 py-2 rounded-2xl border text-left shadow-lg backdrop-blur-md transition-all duration-300 max-w-[270px] animate-in fade-in"
           style={{
             backgroundColor: "var(--surface)",
             borderColor: "var(--border)",
           }}
         >
           <div className="flex items-center justify-between gap-2 mb-0.5">
-            <span className="text-[10px] font-black uppercase tracking-wider text-blue-500 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-              {AGENT_MESSAGES[activeState].action}
+            <span 
+              className="text-[10px] font-black uppercase tracking-wider flex items-center gap-1"
+              style={{ color: bot.glowColor }}
+            >
+              <span 
+                className="w-1.5 h-1.5 rounded-full animate-ping"
+                style={{ backgroundColor: bot.primaryColor }}
+              />
+              {activeState === "celebrating" 
+                ? "Celebration" 
+                : activeState === "coding" 
+                ? "Synthesizing Fix" 
+                : activeState === "resting" 
+                ? "Cooldown Mode" 
+                : bot.badge}
             </span>
             <button
               type="button"
@@ -175,11 +264,18 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
               {soundEnabled ? <Volume2 size={11} /> : <VolumeX size={11} />}
             </button>
           </div>
-          <p className="text-xs font-bold leading-tight" style={{ color: "var(--text)" }}>
-            {AGENT_MESSAGES[activeState].title}
+          <p className="text-xs font-bold leading-tight flex items-center gap-1.5" style={{ color: "var(--text)" }}>
+            <span>{bot.symbol}</span>
+            <span>{bot.name} &bull; {bot.role}</span>
           </p>
           <p className="text-[11px] text-slate-400 leading-tight mt-0.5">
-            {AGENT_MESSAGES[activeState].subtitle}
+            {activeState === "celebrating" 
+              ? "Bounty Won (+120 pts)! PR merged successfully." 
+              : activeState === "coding"
+              ? `Synthesizing fix for ${bot.name}...`
+              : activeState === "resting"
+              ? "Standby mode, listening for repository events..."
+              : bot.currentTask}
           </p>
         </div>
       )}
@@ -189,7 +285,7 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
         onClick={handleTriggerVibes}
         className="cursor-pointer relative transition-transform duration-200 hover:scale-105 active:scale-95"
         style={{ transform: `scale(${scale})` }}
-        title="Click to interact and send Good Vibes!"
+        title={`Click to interact with ${bot.name} and send Good Vibes!`}
       >
         <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Subtle Glow Backdrop */}
@@ -197,20 +293,16 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
             cx="55" 
             cy="55" 
             r="48" 
-            fill={activeState === "celebrating" ? "#EC4899" : "#3978F6"} 
-            opacity="0.15" 
+            fill={activeState === "celebrating" ? "#EC4899" : bot.glowColor} 
+            opacity="0.18" 
             className="animate-pulse" 
           />
 
-          {/* Antennas */}
-          <line x1="42" y1="30" x2="32" y2="15" stroke="#3978F6" strokeWidth="4" strokeLinecap="round" />
-          <circle cx="30" cy="13" r="5" fill="#FFD166" />
-
-          <line x1="68" y1="30" x2="78" y2="15" stroke="#3978F6" strokeWidth="4" strokeLinecap="round" />
-          <circle cx="80" cy="13" r="5" fill={activeState === "hunting" ? "#06D6A0" : "#FF6584"} />
+          {/* Dynamic Bot Antennas */}
+          {renderBotAntennas()}
 
           {/* Main Body */}
-          <rect x="22" y="26" width="66" height="58" rx="26" fill="url(#botBodyGrad)" />
+          <rect x="22" y="26" width="66" height="58" rx="26" fill={`url(#botBodyGrad-${bot.id})`} />
           <rect x="24" y="28" width="62" height="54" rx="24" stroke="white" strokeOpacity="0.35" strokeWidth="2" />
 
           {/* Visor Screen */}
@@ -218,9 +310,9 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
 
           {/* Gradients */}
           <defs>
-            <linearGradient id="botBodyGrad" x1="22" y1="26" x2="88" y2="84" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#2E6FEF" />
-              <stop offset="1" stopColor="#0B1733" />
+            <linearGradient id={`botBodyGrad-${bot.id}`} x1="22" y1="26" x2="88" y2="84" gradientUnits="userSpaceOnUse">
+              <stop stopColor={bot.primaryColor} />
+              <stop offset="1" stopColor={bot.secondaryColor} />
             </linearGradient>
           </defs>
         </svg>
@@ -275,7 +367,10 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
           ) : activeState === "resting" ? (
             <span className="text-[10px] text-cyan-300 font-mono tracking-widest">~zZ</span>
           ) : (
-            <div className="w-3.5 h-1 rounded-full bg-cyan-400/80 shadow-[0_0_4px_#22d3ee]" />
+            <div 
+              className="w-3.5 h-1 rounded-full shadow-[0_0_4px_#22d3ee]"
+              style={{ backgroundColor: bot.glowColor }}
+            />
           )}
         </div>
       </div>
@@ -283,7 +378,7 @@ export const InteractiveCompanion: React.FC<InteractiveCompanionProps> = ({
       {/* Good Vibes Tap Prompt */}
       <span className="text-[10px] font-bold text-slate-400 mt-1 flex items-center gap-1 group-hover:text-pink-500 transition-colors">
         <Sparkles size={11} className="text-amber-400" />
-        <span>Tap companion for Good Vibes ✨</span>
+        <span>Tap {bot.name} for Good Vibes ✨</span>
       </span>
     </div>
   );

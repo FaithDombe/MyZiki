@@ -3,9 +3,16 @@
 import React, { useState } from "react";
 import { InteractiveCompanion, type AgentState } from "./InteractiveCompanion";
 import { LuckyDice } from "./LuckyDice";
-import { Sparkles, Minus, X, Maximize2, Bot, ChevronUp, ChevronDown } from "lucide-react";
+import { WhimsicalBot, WHIMSICAL_BOTS } from "./botData";
+import { Minus, X, Bot, ChevronUp } from "lucide-react";
 
-export const CompanionDock: React.FC = () => {
+interface CompanionDockProps {
+  selectedBot?: WhimsicalBot;
+}
+
+export const CompanionDock: React.FC<CompanionDockProps> = ({
+  selectedBot = WHIMSICAL_BOTS[1],
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [agentState, setAgentState] = useState<AgentState>("hunting");
   const [activeTab, setActiveTab] = useState<"companion" | "dice">("companion");
@@ -16,11 +23,12 @@ export const CompanionDock: React.FC = () => {
       <button
         type="button"
         onClick={() => setDismissed(false)}
-        className="fixed bottom-4 right-4 z-40 px-3 py-1.5 rounded-full text-xs font-bold bg-blue-600 text-white shadow-xl hover:scale-105 transition-transform flex items-center gap-1.5"
-        title="Re-open Ziki Companion"
+        className="fixed bottom-4 right-4 z-40 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-xl hover:scale-105 transition-transform flex items-center gap-1.5"
+        style={{ backgroundColor: selectedBot.primaryColor }}
+        title={`Re-open ${selectedBot.name} Companion`}
       >
-        <Bot size={13} />
-        <span>Companion 🐾</span>
+        <span>{selectedBot.symbol}</span>
+        <span>{selectedBot.name} 🐾</span>
       </button>
     );
   }
@@ -28,7 +36,7 @@ export const CompanionDock: React.FC = () => {
   return (
     <div className="fixed bottom-4 right-4 z-40 select-none">
       {!isExpanded ? (
-        /* Collapsed Non-Intrusive Pill Dock (Mark's requirement for dismissible/subtle UI) */
+        /* Collapsed Non-Intrusive Pill Dock */
         <div 
           className="flex items-center gap-2 p-1.5 pr-3 rounded-full border shadow-xl backdrop-blur-md transition-all hover:scale-102"
           style={{
@@ -41,17 +49,26 @@ export const CompanionDock: React.FC = () => {
             onClick={() => setIsExpanded(true)}
             className="flex items-center gap-2"
           >
-            {/* Mini companion head */}
-            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-md">
-              Zi
+            {/* Dynamic Bot Avatar Badge */}
+            <div 
+              className="w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-md transition-all"
+              style={{ backgroundColor: selectedBot.primaryColor }}
+            >
+              {selectedBot.symbol}
             </div>
             <div className="flex flex-col text-left">
               <span className="text-[11px] font-bold leading-tight" style={{ color: "var(--text)" }}>
-                Ziki Companion
+                {selectedBot.name}
               </span>
-              <span className="text-[9px] text-emerald-500 font-semibold leading-tight flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                Active Tracker
+              <span 
+                className="text-[9px] font-semibold leading-tight flex items-center gap-1"
+                style={{ color: selectedBot.glowColor }}
+              >
+                <span 
+                  className="w-1.5 h-1.5 rounded-full animate-ping"
+                  style={{ backgroundColor: selectedBot.primaryColor }}
+                />
+                {selectedBot.role}
               </span>
             </div>
           </button>
@@ -93,9 +110,13 @@ export const CompanionDock: React.FC = () => {
             style={{ borderColor: "var(--divider)" }}
           >
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-bold" style={{ color: "var(--text)" }}>
-                Agent Companion & Dice
+              <span 
+                className="w-2 h-2 rounded-full animate-pulse"
+                style={{ backgroundColor: selectedBot.primaryColor }}
+              />
+              <span className="text-xs font-bold flex items-center gap-1" style={{ color: "var(--text)" }}>
+                <span>{selectedBot.symbol}</span>
+                <span>{selectedBot.name}</span>
               </span>
             </div>
 
@@ -146,6 +167,7 @@ export const CompanionDock: React.FC = () => {
                 state={agentState}
                 onStateChange={setAgentState}
                 showBubble={true}
+                bot={selectedBot}
               />
             ) : (
               <LuckyDice />

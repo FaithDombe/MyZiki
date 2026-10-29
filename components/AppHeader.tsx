@@ -6,8 +6,8 @@ import {
   Moon, 
   Plus, 
   Award,
-  CheckCircle2
 } from "lucide-react";
+import { WhimsicalBot, WHIMSICAL_BOTS } from "./whimsical/botData";
 
 interface AppHeaderProps {
   darkMode: boolean;
@@ -15,6 +15,7 @@ interface AppHeaderProps {
   onNewIssueClick: () => void;
   onProfileClick: () => void;
   points: number;
+  selectedBot?: WhimsicalBot;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -23,6 +24,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   onNewIssueClick,
   onProfileClick,
   points,
+  selectedBot = WHIMSICAL_BOTS[1], // default to Triaging Bug ZK-646
 }) => {
   return (
     <header 
@@ -78,26 +80,39 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           {darkMode ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} className="text-slate-600" />}
         </button>
 
-        {/* Profile Avatar (Clickable to open profile settings) */}
+        {/* Profile Avatar (With Active Bot Symbol replacing static online tag) */}
         <button
           type="button"
           onClick={onProfileClick}
-          className="flex items-center gap-2 pl-2 border-l text-left group transition-all" 
+          className="flex items-center gap-2.5 pl-2 border-l text-left group transition-all" 
           style={{ borderColor: "var(--border)" }}
-          title="Click to view and edit Profile"
+          title={`Active Persona: ${selectedBot.name} (${selectedBot.role}) - Click to view Settings & Profile`}
         >
           <div className="relative">
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-black text-xs shadow-sm group-hover:ring-2 group-hover:ring-blue-500 transition-all">
               FD
             </div>
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
+            {/* Selected Bot's Symbol badge replacing the static green online tag */}
+            <span 
+              className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[10px] ring-2 ring-white dark:ring-slate-900 shadow-sm transition-transform duration-200 group-hover:scale-125"
+              style={{ 
+                backgroundColor: selectedBot.primaryColor,
+              }}
+              title={`Active Bot Status: ${selectedBot.name}`}
+            >
+              {selectedBot.symbol}
+            </span>
           </div>
           <div className="hidden lg:flex flex-col text-left">
             <span className="text-xs font-bold leading-tight group-hover:text-blue-500 transition-colors" style={{ color: "var(--text)" }}>
               faith dombe
             </span>
-            <span className="text-[10px] leading-tight font-medium" style={{ color: "var(--muted)" }}>
-              Settings & Whimsy
+            <span 
+              className="text-[10px] leading-tight font-semibold flex items-center gap-1 mt-0.5" 
+              style={{ color: selectedBot.glowColor || "var(--muted)" }}
+            >
+              <span>{selectedBot.symbol}</span>
+              <span className="truncate max-w-[130px]">{selectedBot.role || selectedBot.name}</span>
             </span>
           </div>
         </button>
